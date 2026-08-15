@@ -364,6 +364,7 @@ def get_enrollments(db: Session = Depends(database.get_db), admin: schemas.User 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     email: Optional[str] = None
+    password: Optional[str] = None
     role: Optional[schemas.UserRole] = None
     department_code: Optional[str] = None
 
@@ -381,6 +382,8 @@ def update_user(user_id: int, user_update: UserUpdate, db: Session = Depends(dat
         if existing:
             raise HTTPException(status_code=400, detail="Email already taken")
         db_user.email = user_update.email
+    if user_update.password:
+        db_user.password_hash = auth_service.get_password_hash(user_update.password)
     if user_update.role is not None:
         db_user.role = user_update.role
         

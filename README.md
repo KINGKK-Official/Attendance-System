@@ -120,7 +120,15 @@ To run the basic complete system, you will need **2 active terminals** (plus one
 
 ## Default Accounts
 
-If the database has been seeded, you can log in with:
-- **Admin:** `admin@gmail.com` / *(your seeded password)*
-- **IT Manager:** `itmanager@gmail.com` / *(your seeded password)*
-- **Faculty:** `faculty@gmail.com` / *(your seeded password)*
+The database comes pre-seeded with the following test accounts for all roles. All test accounts share the same default password: `testpassword123`
+
+| Role | Name | Email |
+|------|------|-------|
+| **Admin** | Test Admin | `admin@test.com` |
+| **IT Manager** | Test IT Manager | `itmanager@test.com` |
+| **HOD** | Test HOD | `hod@test.com` |
+| **Dean** | Test Dean | `dean@test.com` |
+| **Faculty (Analyzer)** | Test Analyzer | `analyzer@test.com` |
+| **Student** | Test Student | `student@test.com` |
+
+*(Note: You can log into the Admin dashboard and use the **User Management** page to change their roles, emails, and passwords.)*

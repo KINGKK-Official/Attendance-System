@@ -18,7 +18,13 @@ const UserManagement = () => {
 
   const handleViewProfile = (u) => {
     setViewProfileUser(u);
-    setEditProfileForm({ full_name: u.full_name, email: u.email });
+    setEditProfileForm({ 
+      full_name: u.full_name, 
+      email: u.email,
+      password: '',
+      role: u.role,
+      department_code: u.department_code || ''
+    });
     setIsEditingProfile(false);
   };
 
@@ -295,11 +301,42 @@ const UserManagement = () => {
               </h2>
               <p style={{ margin: '0 0 16px 0', color: 'var(--text-muted)', fontSize: '14px' }}>
                 {isEditingProfile ? (
-                  <input 
-                    value={editProfileForm.email} 
-                    onChange={e => setEditProfileForm({...editProfileForm, email: e.target.value})}
-                    style={{ fontSize: '14px', padding: '4px 8px', textAlign: 'center', width: '100%', borderRadius: '4px', border: '1px solid var(--border)', outline: 'none', marginTop: '4px' }}
-                  />
+                  <>
+                    <input 
+                      value={editProfileForm.email} 
+                      onChange={e => setEditProfileForm({...editProfileForm, email: e.target.value})}
+                      style={{ fontSize: '14px', padding: '4px 8px', textAlign: 'center', width: '100%', borderRadius: '4px', border: '1px solid var(--border)', outline: 'none', marginTop: '4px', marginBottom: '8px' }}
+                      placeholder="Email Address"
+                    />
+                    <input 
+                      type="password"
+                      value={editProfileForm.password} 
+                      onChange={e => setEditProfileForm({...editProfileForm, password: e.target.value})}
+                      style={{ fontSize: '14px', padding: '4px 8px', textAlign: 'center', width: '100%', borderRadius: '4px', border: '1px solid var(--border)', outline: 'none', marginBottom: '8px' }}
+                      placeholder="New Password (leave blank to keep)"
+                    />
+                    <select
+                      value={editProfileForm.role}
+                      onChange={e => setEditProfileForm({...editProfileForm, role: e.target.value})}
+                      style={{ fontSize: '14px', padding: '4px 8px', textAlign: 'center', width: '100%', borderRadius: '4px', border: '1px solid var(--border)', outline: 'none', marginBottom: '8px' }}
+                    >
+                      <option value="FACULTY">Faculty Member</option>
+                      <option value="IT_MANAGER">IT Manager</option>
+                      <option value="ADMIN">System Administrator</option>
+                      <option value="HOD">Head of Department</option>
+                      <option value="DEAN">Dean</option>
+                      <option value="ASSOCIATE_DEAN">Associate Dean</option>
+                      <option value="STUDENT">Student</option>
+                    </select>
+                    {['HOD', 'DEAN', 'ASSOCIATE_DEAN'].includes(editProfileForm.role) && (
+                      <input 
+                        value={editProfileForm.department_code || ''} 
+                        onChange={e => setEditProfileForm({...editProfileForm, department_code: e.target.value})}
+                        style={{ fontSize: '14px', padding: '4px 8px', textAlign: 'center', width: '100%', borderRadius: '4px', border: '1px solid var(--border)', outline: 'none' }}
+                        placeholder="Department Code"
+                      />
+                    )}
+                  </>
                 ) : (
                   viewProfileUser.email
                 )}
