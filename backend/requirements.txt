@@ -1,0 +1,32 @@
+fastapi
+uvicorn
+sqlalchemy
+pyodbc
+pydantic-settings
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+python-dotenv
+opencv-python-headless
+fpdf2
+pandas
+openpyxl
+# ─── Upgrade dependencies (Tasks 2, 6, 11) ───
+cryptography          # Task 6: Fernet biometric-embedding encryption
+onnxruntime           # Task 2 & 11: ONNX liveness + AdaFace inference
+imagehash             # Task 1: DCT-based perceptual-hash frame dedup (Pillow-backed)
+Pillow                # required by imagehash
+numpy
+
+# IT-Manager upgrade
+psutil
+requests
+imageio-ffmpeg
+
+# v2.3 Upgrades
+kafka-python
+redis
+httpx
+
+google-auth==2.22.0
+requests==2.31.0
