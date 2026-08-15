@@ -228,26 +228,38 @@ def control_camera_ptz(classroom_id: int, ptz: PTZCommand, request: Request,
         }
         dahua_cmd = cmd_map.get(ptz.command, ptz.command)
         
-        if cam.stream_path and "realmonitor" in cam.stream_path.lower():
-            url_start = f"http://{cam.ip_address}/cgi-bin/ptz.cgi?action=start&channel=1&code={dahua_cmd}&arg1=4&arg2=4&arg3=0"
-            url_stop = f"http://{cam.ip_address}/cgi-bin/ptz.cgi?action=stop&channel=1&code={dahua_cmd}&arg1=4&arg2=4&arg3=0"
-            
+        if cam.stream_path and ("realmonitor" in cam.stream_path.lower() or "onvif" in cam.stream_path.lower()):
             auth = HTTPDigestAuth(user, pwd) if user and pwd else None
+            onvif_url = f"http://{cam.ip_address}/onvif/ptz_service"
+            headers = {"Content-Type": "application/soap+xml; charset=utf-8"}
+            
+            # Map commands to ONVIF PanTilt / Zoom velocity vectors
+            x, y, z = "0", "0", "0"
+            if ptz.command == "up": y = "0.5"
+            elif ptz.command == "down": y = "-0.5"
+            elif ptz.command == "left": x = "-0.5"
+            elif ptz.command == "right": x = "0.5"
+            elif ptz.command == "zoom_in": z = "0.5"
+            elif ptz.command == "zoom_out": z = "-0.5"
+            
+            move_xml = f"""<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope"><s:Body><ContinuousMove xmlns="http://www.onvif.org/ver20/ptz/wsdl"><ProfileToken>Profile000</ProfileToken><Velocity><PanTilt x="{x}" y="{y}" space="http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace" xmlns="http://www.onvif.org/ver10/schema"/><Zoom x="{z}" space="http://www.onvif.org/ver10/tptz/ZoomSpaces/VelocityGenericSpace" xmlns="http://www.onvif.org/ver10/schema"/></Velocity></ContinuousMove></s:Body></s:Envelope>"""
+            
+            stop_xml = """<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope"><s:Body><Stop xmlns="http://www.onvif.org/ver20/ptz/wsdl"><ProfileToken>Profile000</ProfileToken><PanTilt>true</PanTilt><Zoom>true</Zoom></Stop></s:Body></s:Envelope>"""
             
             try:
                 import time
                 try:
-                    requests.get(url_start, auth=auth, timeout=1.5)
+                    requests.post(onvif_url, data=move_xml, headers=headers, auth=auth, timeout=1.5)
                 except Exception as e:
-                    print(f"PTZ start request error: {e}")
+                    print(f"ONVIF PTZ start request error: {e}")
                 
                 # Stop after a short delay so the camera doesn't get stuck panning forever
                 time.sleep(0.5)
                 
                 try:
-                    requests.get(url_stop, auth=auth, timeout=1.5)
+                    requests.post(onvif_url, data=stop_xml, headers=headers, auth=auth, timeout=1.5)
                 except Exception as e:
-                    print(f"PTZ stop request error: {e}")
+                    print(f"ONVIF PTZ stop request error: {e}")
             except Exception as e:
                 print(f"PTZ logic error: {e}")
                 
@@ -275,11 +287,13 @@ def control_camera_preset(classroom_id: int, preset: PresetCommand, request: Req
         
         p_num = preset.preset.replace('P', '')
         
-        if cam.stream_path and "realmonitor" in cam.stream_path.lower():
-            url = f"http://{cam.ip_address}/cgi-bin/ptz.cgi?action=start&channel=1&code=GotoPreset&arg1=0&arg2={p_num}&arg3=0"
+        if cam.stream_path and ("realmonitor" in cam.stream_path.lower() or "onvif" in cam.stream_path.lower()):
+            onvif_url = f"http://{cam.ip_address}/onvif/ptz_service"
+            headers = {"Content-Type": "application/soap+xml; charset=utf-8"}
+            preset_xml = f"""<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope"><s:Body><GotoPreset xmlns="http://www.onvif.org/ver20/ptz/wsdl"><ProfileToken>Profile000</ProfileToken><PresetToken>{p_num}</PresetToken></GotoPreset></s:Body></s:Envelope>"""
             auth = HTTPDigestAuth(user, pwd) if user and pwd else None
             try:
-                requests.get(url, auth=auth, timeout=2)
+                requests.post(onvif_url, data=preset_xml, headers=headers, auth=auth, timeout=2)
             except Exception as e:
                 print(f"Preset failed: {e}")
     except Exception as e:
