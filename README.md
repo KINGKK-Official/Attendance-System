@@ -68,6 +68,13 @@ The backend is built with Python and FastAPI.
    ```
    *The backend should now be running at `http://localhost:8000`.*
 
+6. **Seed the Database (First Run Only):**
+   Open a new terminal, activate the virtual environment, and run:
+   ```bash
+   python seed.py
+   ```
+   *(This will create the test accounts, dummy students, and a demo course so the database isn't empty).*
+
 ---
 
 ## 3. Frontend Setup (React + Vite)
