@@ -202,10 +202,6 @@ const CameraSetup = () => {
                   <div /><button onClick={() => handlePTZ('down')} style={dpad}>▼</button><div />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => handlePTZ('zoom_in')} style={zoom}>Zoom In (+)</button>
-                    <button onClick={() => handlePTZ('zoom_out')} style={zoom}>Zoom Out (-)</button>
-                  </div>
                   <div><span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Go to Preset Spot</span>
                     <div style={{ display: 'flex', gap: '8px' }}>{['P1', 'P2', 'P3', 'P4'].map(p => <button key={p} onClick={() => handlePreset(p)} style={{ flex: 1, padding: '6px', background: GOLD, color: '#0F172A', border: 'none', borderRadius: '4px', fontWeight: 600, fontSize: '12px', cursor: 'pointer' }}>{p}</button>)}</div>
                   </div>
