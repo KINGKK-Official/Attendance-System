@@ -53,8 +53,25 @@ const CameraSetup = () => {
     } catch (err) { say(err.response?.data?.detail || 'Connection test failed.', true); }
   };
 
-  const handlePTZ = async (command) => { if (!selectedCam) return alert('Select a camera (Edit) first.'); say(`PTZ command '${command}' sent to camera ${selectedCam.room_number}`); };
-  const handlePreset = async (preset) => { if (!selectedCam) return alert('Select a camera (Edit) first.'); say(`Preset '${preset}' called on camera ${selectedCam.room_number}`); };
+  const handlePTZ = async (command) => { 
+    if (!selectedCam) return alert('Select a camera (Edit) first.'); 
+    try {
+      await api.post(`/api/it-manager/cameras/${selectedCam.id}/ptz`, { command });
+      say(`PTZ command '${command}' sent to camera ${selectedCam.room_number}`); 
+    } catch (err) {
+      say(`PTZ failed: ${err.response?.data?.detail || err.message}`, true);
+    }
+  };
+  
+  const handlePreset = async (preset) => { 
+    if (!selectedCam) return alert('Select a camera (Edit) first.'); 
+    try {
+      await api.post(`/api/it-manager/cameras/${selectedCam.id}/preset`, { preset });
+      say(`Preset '${preset}' called on camera ${selectedCam.room_number}`); 
+    } catch (err) {
+      say(`Preset failed: ${err.response?.data?.detail || err.message}`, true);
+    }
+  };
 
   const startVideo = () => { if (selectedCam) setVideoOn(true); };
   const stopVideo = () => setVideoOn(false);
