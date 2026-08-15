@@ -234,15 +234,16 @@ def control_camera_ptz(classroom_id: int, ptz: PTZCommand, request: Request,
             headers = {"Content-Type": "application/soap+xml; charset=utf-8"}
             
             # Map commands to ONVIF PanTilt / Zoom velocity vectors
-            x, y, z = "0", "0", "0"
-            if ptz.command == "up": y = "0.5"
-            elif ptz.command == "down": y = "-0.5"
-            elif ptz.command == "left": x = "-0.5"
-            elif ptz.command == "right": x = "0.5"
-            elif ptz.command == "zoom_in": z = "0.5"
-            elif ptz.command == "zoom_out": z = "-0.5"
+            pan_tilt_xml = ""
+            zoom_xml = ""
+            if ptz.command == "up": pan_tilt_xml = '<PanTilt x="0" y="0.5" space="http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace" xmlns="http://www.onvif.org/ver10/schema"/>'
+            elif ptz.command == "down": pan_tilt_xml = '<PanTilt x="0" y="-0.5" space="http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace" xmlns="http://www.onvif.org/ver10/schema"/>'
+            elif ptz.command == "left": pan_tilt_xml = '<PanTilt x="-0.5" y="0" space="http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace" xmlns="http://www.onvif.org/ver10/schema"/>'
+            elif ptz.command == "right": pan_tilt_xml = '<PanTilt x="0.5" y="0" space="http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace" xmlns="http://www.onvif.org/ver10/schema"/>'
+            elif ptz.command == "zoom_in": zoom_xml = '<Zoom x="0.5" space="http://www.onvif.org/ver10/tptz/ZoomSpaces/VelocityGenericSpace" xmlns="http://www.onvif.org/ver10/schema"/>'
+            elif ptz.command == "zoom_out": zoom_xml = '<Zoom x="-0.5" space="http://www.onvif.org/ver10/tptz/ZoomSpaces/VelocityGenericSpace" xmlns="http://www.onvif.org/ver10/schema"/>'
             
-            move_xml = f"""<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope"><s:Body><ContinuousMove xmlns="http://www.onvif.org/ver20/ptz/wsdl"><ProfileToken>Profile000</ProfileToken><Velocity><PanTilt x="{x}" y="{y}" space="http://www.onvif.org/ver10/tptz/PanTiltSpaces/VelocityGenericSpace" xmlns="http://www.onvif.org/ver10/schema"/><Zoom x="{z}" space="http://www.onvif.org/ver10/tptz/ZoomSpaces/VelocityGenericSpace" xmlns="http://www.onvif.org/ver10/schema"/></Velocity></ContinuousMove></s:Body></s:Envelope>"""
+            move_xml = f"""<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope"><s:Body><ContinuousMove xmlns="http://www.onvif.org/ver20/ptz/wsdl"><ProfileToken>Profile000</ProfileToken><Velocity>{pan_tilt_xml}{zoom_xml}</Velocity></ContinuousMove></s:Body></s:Envelope>"""
             
             stop_xml = """<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope"><s:Body><Stop xmlns="http://www.onvif.org/ver20/ptz/wsdl"><ProfileToken>Profile000</ProfileToken><PanTilt>true</PanTilt><Zoom>true</Zoom></Stop></s:Body></s:Envelope>"""
             

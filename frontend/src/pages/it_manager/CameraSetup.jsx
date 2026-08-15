@@ -55,6 +55,7 @@ const CameraSetup = () => {
 
   const handlePTZ = async (command) => { 
     if (!selectedCam) return alert('Select a camera (Edit) first.'); 
+    say(`Sending PTZ '${command}'...`);
     try {
       await api.post(`/api/it-manager/cameras/${selectedCam.id}/ptz`, { command });
       say(`PTZ command '${command}' sent to camera ${selectedCam.room_number}`); 
@@ -65,6 +66,7 @@ const CameraSetup = () => {
   
   const handlePreset = async (preset) => { 
     if (!selectedCam) return alert('Select a camera (Edit) first.'); 
+    say(`Calling Preset '${preset}'...`);
     try {
       await api.post(`/api/it-manager/cameras/${selectedCam.id}/preset`, { preset });
       say(`Preset '${preset}' called on camera ${selectedCam.room_number}`); 
